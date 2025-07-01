@@ -41,7 +41,7 @@
   "homepage": "https://github.com/BTrottAtWork/expo-marketercloudpersonalization#readme",
   "dependencies": {},
   "devDependencies": {
-    "@react-native-community/cli": "^14.0.0",
+    "@react-native-community/cli": "^18.0.0",
     "@react-native-community/cli-platform-android": "^18.0.0",
     "@react-native-community/cli-platform-ios": "^18.0.0",
     "@react-native/babel-preset": "^0.73.0",

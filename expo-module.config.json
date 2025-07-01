@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": ["MarketerCloudPersonalizationRNModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.mobilemarketercloudpersonalization.MarketerCloudPersonalizationRNModule"]
+  }
+}

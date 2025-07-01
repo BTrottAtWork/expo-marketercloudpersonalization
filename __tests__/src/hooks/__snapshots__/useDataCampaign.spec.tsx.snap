@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`useDataCampaign Campaign fired for another target should render null 1`] = `[]`;
+
+exports[`useDataCampaign No campaigns fired should render null 1`] = `[]`;
+
+exports[`useDataCampaign continue to render hello world when single campaign is removed. 1`] = `
+[
+  {
+    "campaignId": "my_id",
+    "data": {
+      "text": "hello world",
+    },
+    "target": "my_target",
+  },
+]
+`;
+
+exports[`useDataCampaign render null when all campaigns are removed. 1`] = `[]`;

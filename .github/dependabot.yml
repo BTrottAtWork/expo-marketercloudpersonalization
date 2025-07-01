@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - "/"
+      - "/example"
+    schedule:
+      interval: daily
+    ignore:
+      # ignore deps managed by rnx-kit
+      - dependency-name: "react-native"
+      - dependency-name: "react"
+      - dependency-name: "react-test-renderer"
+      - dependency-name: "expo"
+    target-branch: "main"
+    open-pull-requests-limit: 99

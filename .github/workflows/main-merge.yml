@@ -1,0 +1,52 @@
+name: Main Merge & Publish Package
+# TODO: refactor to publish when a release is tagged
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to publish new package from"
+        required: true
+        default: "main"
+concurrency:
+  group: environment-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  publish-package:
+    name: Publish Package
+    runs-on: ${{ matrix.os }}
+    permissions:
+      actions: write
+      contents: write
+    outputs:
+      new-release: ${{ steps.publish.outputs.new-release }}
+      package-version: ${{ steps.publish.outputs.package-version }}
+    strategy:
+      matrix:
+        node: ["20.x"]
+        os: ["ubuntu-latest"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x' # Or your desired version
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm # Cache the npm cache directory
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }} # Unique key based on OS and package-lock.json
+          restore-keys: |
+            ${{ runner.os }}-node- # Restore key for partial matches
+
+      - run: npm install
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+ 

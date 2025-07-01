@@ -43,18 +43,7 @@ or simply restart your terminal...
 
 ### Update plugins entry in `app.json`
 ```json
-    "plugins": [
-      "expo-marketercloudpersonalization/plugins/withMarketerCloudPersonalizationSDK", {
-        "mcpAccount": "your_mcp_account",
-        "mcpDataset": "your_mcp_dataset",
-        "android": {
-            "scheme": "your_mcp_android_scheme"
-        },
-        "ios": {
-            "scheme": "your_mcp_ios_scheme"
-        }
-      }
-    ],
+    "plugins": ["expo-marketercloudpersonalization/plugins/withMarketerCloudPersonalizationSDK"],
 ```
 
 # Installation in bare React Native projects

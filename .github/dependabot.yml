@@ -13,9 +13,13 @@ updates:
       - dependency-name: "react-test-renderer"
       - dependency-name: "expo"
       - dependency-name: "expo-system-ui"
+      - dependency-name: "expo-module-scripts"
+      - dependency-name: "expo-modules-core"
       - dependency-name: "react-native-screens"
       - dependency-name: "react-native-safe-area-context"
-      
+      - dependency-name: "jest"
+      - dependency-name: "@react-native/babel-preset"
+      - dependency-name: "@react-native/metro-config"
 
     target-branch: "main"
     open-pull-requests-limit: 99

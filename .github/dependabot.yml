@@ -7,7 +7,6 @@ updates:
     schedule:
       interval: daily
     ignore:
-      # ignore deps managed by rnx-kit
       - dependency-name: "react-native"
       - dependency-name: "react"
       - dependency-name: "react-test-renderer"
@@ -20,6 +19,7 @@ updates:
       - dependency-name: "jest"
       - dependency-name: "@react-native/babel-preset"
       - dependency-name: "@react-native/metro-config"
+      - dependency-name: "@react-native-community/cli"
 
     target-branch: "main"
     open-pull-requests-limit: 99

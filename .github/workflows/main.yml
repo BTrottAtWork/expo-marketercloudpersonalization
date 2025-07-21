@@ -4,6 +4,8 @@ jobs:
   npm-install:
     name: NPM install
     runs-on: ${{ matrix.os }}
+    permissions:
+      actions: write
     strategy:
       matrix:
         node: ["20.x"]

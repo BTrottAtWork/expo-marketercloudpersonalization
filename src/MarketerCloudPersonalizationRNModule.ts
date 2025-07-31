@@ -1,4 +1,5 @@
 import { requireNativeModule, NativeModule } from "expo-modules-core";
+
 import { MarketerCloudPersonalizationRNModuleEvents } from "./MarketerCloudPersonalizationRN.types";
 
 declare class MarketerCloudPersonalizationRNModule extends NativeModule<

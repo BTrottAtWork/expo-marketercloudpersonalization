@@ -42,7 +42,7 @@
   "dependencies": {},
   "devDependencies": {
     "@react-native-community/cli": "^18.0.0",
-    "@react-native-community/cli-platform-android": "^18.0.0",
+    "@react-native-community/cli-platform-android": "^20.0.0",
     "@react-native-community/cli-platform-ios": "^18.0.0",
     "@react-native/babel-preset": "^0.73.0",
     "@react-native/metro-config": "^0.73.0",

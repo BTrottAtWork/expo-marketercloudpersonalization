@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within this project, please report it to us as soon as possible via email at `security@example.com`.
+If you discover a security vulnerability within this project, please report it to us as soon as possible via the package owner's email -- can be found using `npm owner ls expo-marketercloudpersonalization` command.
 
 **Please do NOT disclose security-related issues publicly** until a fix has been announced.
 

@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { addListenerForCampaignTarget } from "..";
 import {
   DataCampaignEvent,
-  DataCampaignPrioritizationOptions,
+  UseDataCampaignOptions,
 } from "../MarketerCloudPersonalizationRN.types";
+import MarketerCloudPersonalizationModule from "../MarketerCloudPersonalizationRNModule";
 import { defaultPrioritizationHandler } from "../utils/dataCampaignPrioritization";
 
 /**
@@ -22,11 +23,7 @@ import { defaultPrioritizationHandler } from "../utils/dataCampaignPrioritizatio
  */
 export const useDataCampaign = <DataCampaignPayloadType>(
   targets: string[],
-  prioritizationOptions?: DataCampaignPrioritizationOptions,
-  customPrioritizationHandler?: (
-    campaigns: DataCampaignEvent<DataCampaignPayloadType>[],
-    opts?: DataCampaignPrioritizationOptions,
-  ) => DataCampaignEvent<DataCampaignPayloadType>[],
+  options?: UseDataCampaignOptions<DataCampaignPayloadType>,
 ) => {
   const data = useRef({});
   const [campaigns, setCampaigns] = useState<
@@ -34,6 +31,7 @@ export const useDataCampaign = <DataCampaignPayloadType>(
   >([]);
   const [campaignReady, setCampaignReady] = useState(false);
   const listenersRef = useRef<Record<string, EventSubscription>>({});
+  const supressControlGroup = options?.supressControlGroup !== false;
 
   const removeCampaign = (campaignId: string): void => {
     const camps = campaigns.filter((c) => c.campaignId !== campaignId);
@@ -58,20 +56,37 @@ export const useDataCampaign = <DataCampaignPayloadType>(
           updatedData[t] = campaignData;
           data.current = updatedData;
 
+          /**
+           * Filter falsey objects, and if specified to supress control group campaigns, remove campaign from list.
+           */
           const activeTargets = targets.filter((t) => data.current[t]);
           const activeCampaigns = activeTargets.map((t) => data.current[t]);
-          const prioritizedCampaigns = customPrioritizationHandler
-            ? customPrioritizationHandler(
+          const prioritizedCampaigns = options?.customPrioritizationHandler
+            ? options.customPrioritizationHandler(
                 activeCampaigns,
-                prioritizationOptions,
+                options?.prioritizationOptions,
               )
             : defaultPrioritizationHandler(
                 activeCampaigns,
-                prioritizationOptions,
+                options?.prioritizationOptions,
               );
 
-          setCampaigns(prioritizedCampaigns);
-          setCampaignReady(prioritizedCampaigns.length > 0);
+          /**
+           * Control group exclusions must be the last check to occur because we may exclude campaigns through the
+           * prioritization rules, and we want to ensure we only log the impression if the ONLY reason the campaign was excluded was
+           * due to the user being part of the control group.
+           */
+          const controlGroupExcluded = prioritizedCampaigns.filter((c) => {
+            if (supressControlGroup && c.isControlGroup) {
+              MarketerCloudPersonalizationModule.trackImpression(c.campaignId);
+              return false;
+            }
+
+            return true;
+          });
+
+          setCampaigns(controlGroupExcluded);
+          setCampaignReady(controlGroupExcluded.length > 0);
         },
       );
     });

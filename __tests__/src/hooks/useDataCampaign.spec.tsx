@@ -5,6 +5,7 @@ import { emitMockEvent } from "../../../__mocks__/MarketerCloudPersonalizationRN
 const mockCampaignEvent = {
     target: "my_target", 
     campaignId: "my_id", 
+    isControlGroup: false,
     data: {
         text: "hello world"
     }       
@@ -29,6 +30,26 @@ describe("useDataCampaign", () => {
         })
     
         expect(result.current.ready).toBeFalsy();
+        expect(result.current.campaigns).toMatchSnapshot();
+    });
+
+    test("Campaign fired should be filtered if user is in control group.", () => {
+        const {result} = renderHook(() => useDataCampaign<TestCampaignType>(["my_target", "remove_one", "remove_all"]));
+        act(() => {
+            emitMockEvent("mcp_data_campaign", {...mockCampaignEvent, target: "my_target", isControlGroup: true});
+        })
+    
+        expect(result.current.ready).toBeFalsy();
+        expect(result.current.campaigns).toMatchSnapshot();
+    });
+
+    test("Campaign fired should skip control group filter when ignore is specified.", () => {
+        const {result} = renderHook(() => useDataCampaign<TestCampaignType>(["my_target", "remove_one", "remove_all"], {supressControlGroup: false}));
+        act(() => {
+            emitMockEvent("mcp_data_campaign", {...mockCampaignEvent, target: "my_target", isControlGroup: true});
+        })
+    
+        expect(result.current.ready).toBeTruthy();
         expect(result.current.campaigns).toMatchSnapshot();
     });
 
@@ -78,7 +99,7 @@ describe("useDataCampaign", () => {
 
     test("custom prioritization handler is called if passed.", () => {
         const handler = jest.fn().mockReturnValue([mockCampaignEvent]);
-        const {result} = renderHook(() => useDataCampaign<TestCampaignType>(["my_target"], {displayLimit: 1, prioritizationAttributesInOrderOfImportance: ["text"]}, handler));
+        const {result} = renderHook(() => useDataCampaign<TestCampaignType>(["my_target"], {prioritizationOptions: {displayLimit: 1, prioritizationAttributesInOrderOfImportance: ["text"]}, customPrioritizationHandler: handler}));
 
         act( () => {
             emitMockEvent("mcp_data_campaign", mockCampaignEvent);

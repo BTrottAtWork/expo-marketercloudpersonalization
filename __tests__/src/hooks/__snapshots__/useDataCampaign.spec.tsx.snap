@@ -2,6 +2,21 @@
 
 exports[`useDataCampaign Campaign fired for another target should render null 1`] = `[]`;
 
+exports[`useDataCampaign Campaign fired should be filtered if user is in control group. 1`] = `[]`;
+
+exports[`useDataCampaign Campaign fired should skip control group filter when ignore is specified. 1`] = `
+[
+  {
+    "campaignId": "my_id",
+    "data": {
+      "text": "hello world",
+    },
+    "isControlGroup": true,
+    "target": "my_target",
+  },
+]
+`;
+
 exports[`useDataCampaign No campaigns fired should render null 1`] = `[]`;
 
 exports[`useDataCampaign continue to render hello world when single campaign is removed. 1`] = `
@@ -11,6 +26,7 @@ exports[`useDataCampaign continue to render hello world when single campaign is 
     "data": {
       "text": "hello world",
     },
+    "isControlGroup": false,
     "target": "my_target",
   },
 ]

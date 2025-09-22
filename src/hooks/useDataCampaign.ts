@@ -6,6 +6,7 @@ import {
   DataCampaignEvent,
   UseDataCampaignOptions,
 } from "../MarketerCloudPersonalizationRN.types";
+import MarketerCloudPersonalizationModule from "../MarketerCloudPersonalizationRNModule";
 import { defaultPrioritizationHandler } from "../utils/dataCampaignPrioritization";
 
 /**
@@ -58,17 +59,7 @@ export const useDataCampaign = <DataCampaignPayloadType>(
           /**
            * Filter falsey objects, and if specified to supress control group campaigns, remove campaign from list.
            */
-          const activeTargets = targets.filter((t) => {
-            if (!data.current[t]) {
-              return false;
-            }
-
-            if (supressControlGroup) {
-              return !data.current[t].isControlGroup;
-            }
-
-            return true;
-          });
+          const activeTargets = targets.filter((t) => data.current[t]);
           const activeCampaigns = activeTargets.map((t) => data.current[t]);
           const prioritizedCampaigns = options?.customPrioritizationHandler
             ? options.customPrioritizationHandler(
@@ -80,8 +71,22 @@ export const useDataCampaign = <DataCampaignPayloadType>(
                 options?.prioritizationOptions,
               );
 
-          setCampaigns(prioritizedCampaigns);
-          setCampaignReady(prioritizedCampaigns.length > 0);
+          /**
+           * Control group exclusions must be the last check to occur because we may exclude campaigns through the
+           * prioritization rules, and we want to ensure we only log the impression if the ONLY reason the campaign was excluded was
+           * due to the user being part of the control group.
+           */
+          const controlGroupExcluded = prioritizedCampaigns.filter((c) => {
+            if (supressControlGroup && c.isControlGroup) {
+              MarketerCloudPersonalizationModule.trackImpression(c.campaignId);
+              return false;
+            }
+
+            return true;
+          });
+
+          setCampaigns(controlGroupExcluded);
+          setCampaignReady(controlGroupExcluded.length > 0);
         },
       );
     });

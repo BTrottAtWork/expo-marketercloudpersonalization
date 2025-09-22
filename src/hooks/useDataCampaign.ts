@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { addListenerForCampaignTarget } from "..";
 import {
   DataCampaignEvent,
-  DataCampaignPrioritizationOptions,
+  UseDataCampaignOptions,
 } from "../MarketerCloudPersonalizationRN.types";
 import { defaultPrioritizationHandler } from "../utils/dataCampaignPrioritization";
 
@@ -22,11 +22,7 @@ import { defaultPrioritizationHandler } from "../utils/dataCampaignPrioritizatio
  */
 export const useDataCampaign = <DataCampaignPayloadType>(
   targets: string[],
-  prioritizationOptions?: DataCampaignPrioritizationOptions,
-  customPrioritizationHandler?: (
-    campaigns: DataCampaignEvent<DataCampaignPayloadType>[],
-    opts?: DataCampaignPrioritizationOptions,
-  ) => DataCampaignEvent<DataCampaignPayloadType>[],
+  options?: UseDataCampaignOptions<DataCampaignPayloadType>,
 ) => {
   const data = useRef({});
   const [campaigns, setCampaigns] = useState<
@@ -34,6 +30,7 @@ export const useDataCampaign = <DataCampaignPayloadType>(
   >([]);
   const [campaignReady, setCampaignReady] = useState(false);
   const listenersRef = useRef<Record<string, EventSubscription>>({});
+  const supressControlGroup = options?.supressControlGroup !== false;
 
   const removeCampaign = (campaignId: string): void => {
     const camps = campaigns.filter((c) => c.campaignId !== campaignId);
@@ -58,16 +55,29 @@ export const useDataCampaign = <DataCampaignPayloadType>(
           updatedData[t] = campaignData;
           data.current = updatedData;
 
-          const activeTargets = targets.filter((t) => data.current[t]);
+          /**
+           * Filter falsey objects, and if specified to supress control group campaigns, remove campaign from list.
+           */
+          const activeTargets = targets.filter((t) => {
+            if (!data.current[t]) {
+              return false;
+            }
+
+            if (supressControlGroup) {
+              return !data.current[t].isControlGroup;
+            }
+
+            return true;
+          });
           const activeCampaigns = activeTargets.map((t) => data.current[t]);
-          const prioritizedCampaigns = customPrioritizationHandler
-            ? customPrioritizationHandler(
+          const prioritizedCampaigns = options?.customPrioritizationHandler
+            ? options.customPrioritizationHandler(
                 activeCampaigns,
-                prioritizationOptions,
+                options?.prioritizationOptions,
               )
             : defaultPrioritizationHandler(
                 activeCampaigns,
-                prioritizationOptions,
+                options?.prioritizationOptions,
               );
 
           setCampaigns(prioritizedCampaigns);

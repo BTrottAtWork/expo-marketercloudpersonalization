@@ -9,6 +9,15 @@ export type DataCampaignEvent<EventPayloadType> = {
   data: EventPayloadType;
 };
 
+export type UseDataCampaignOptions<DataCampaignPayloadType> = {
+  supressControlGroup?: boolean;
+  prioritizationOptions?: DataCampaignPrioritizationOptions;
+  customPrioritizationHandler?: (
+    campaigns: DataCampaignEvent<DataCampaignPayloadType>[],
+    opts?: DataCampaignPrioritizationOptions,
+  ) => DataCampaignEvent<DataCampaignPayloadType>[];
+};
+
 export type DataCampaignPrioritizationOptions = {
   /**
    * After sorting based on the prioritization rules, how may winners should be allowed to display?

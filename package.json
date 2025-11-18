@@ -41,7 +41,7 @@
   "homepage": "https://github.com/BTrottAtWork/expo-marketercloudpersonalization#readme",
   "devDependencies": {
     "@types/jest": "29.5.14",
-    "@types/react": "~19.1.10",
+    "@types/react": "~19.2.6",
     "@testing-library/react-native": "^13.x.x",
     "expo": "~54.0.24",
     "expo-module-scripts": "^3.5.4",

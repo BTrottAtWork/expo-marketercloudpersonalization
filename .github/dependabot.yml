@@ -9,6 +9,7 @@ updates:
     ignore:
       - dependency-name: "react-native"
       - dependency-name: "react"
+      - dependency-name: "@types/react"
       - dependency-name: "react-test-renderer"
       - dependency-name: "expo"
       - dependency-name: "expo-system-ui"

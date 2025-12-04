@@ -1,6 +1,6 @@
 {
   "name": "expo-marketercloudpersonalization",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Expo/React native wrapper for marketer cloud personalization sdk",
   "main": "build/index.js",
   "types": "build/index.d.ts",

@@ -3,28 +3,56 @@ const { withAppDelegate, withMainApplication, withAppBuildGradle } = require("ex
 //https://github.com/expo/expo/blob/main/packages/%40expo/config-plugins/build/utils/generateCode.js#L36
 const { mergeContents } = require('@expo/config-plugins/build/utils/generateCode');
 
-const ios = async (config) => {
-    const headerLine = `#import <Evergage/Evergage.h>`;
-    const initMCPSDKSnippet = `
-    Evergage *evergage = [Evergage sharedInstance];
+const iosAppDelegateCfg = (isSwift) => {
+    if(isSwift) {
+        return {
+            importAnchor: /(\@UIApplicationMain)/,
+            import: `import Evergage`,
+            snippetAnchor: /(bindReactNativeFactory\(factory\))/,
+            snippet: `
+                let evergage = Evergage.sharedInstance()
+                #if DEBUG
+                    evergage.logLevel = .debug
+                #endif
+                
+                evergage.start(clientConfiguration: { builder in
+                    builder.account = "${process.env.MCP_ACCOUNT}"
+                    builder.dataset = "${process.env.MCP_DATASET}"
+                    builder.usePushNotifications = false
+                })
+            `
+        }
+    } else {
+        return {
+            importAnchor: /(@implementation\sAppDelegate)/,
+            import: `#import <Evergage/Evergage.h>`,
+            snippetAnchor: /(self\.initialProps = @\{\};)/,
+            snippet: `
+                Evergage *evergage = [Evergage sharedInstance];
 
-    #ifdef DEBUG
-        evergage.logLevel = EVGLogLevelDebug;
-    #endif
-    
-    // Start Evergage with your Evergage Configuration:
-    [evergage startWithClientConfiguration:^(EVGClientConfigurationBuilder * _Nonnull builder) {
-    builder.account = @"${process.env.MCP_ACCOUNT}";
-    builder.dataset = @"${process.env.MCP_DATASET}";
-        builder.usePushNotifications = NO; // If you want to use Evergage push notification campaigns
-    }];   
-    `;
+                #ifdef DEBUG
+                    evergage.logLevel = EVGLogLevelDebug;
+                #endif
+                
+                // Start Evergage with your Evergage Configuration:
+                [evergage startWithClientConfiguration:^(EVGClientConfigurationBuilder * _Nonnull builder) {
+                builder.account = @"${process.env.MCP_ACCOUNT}";
+                builder.dataset = @"${process.env.MCP_DATASET}";
+                    builder.usePushNotifications = NO; 
+                }];
+            `
+        }
+    }
+}
+
+const ios = async (config) => {
+    const cfg = iosAppDelegateCfg(config.modResults.language === 'swift');
 
     const appDelegate = config.modResults;
     appDelegate.contents = mergeContents({
         src: appDelegate.contents,
-        newSrc: headerLine,
-        anchor: /(@implementation\sAppDelegate)/,
+        newSrc: cfg.import,
+        anchor: cfg.importAnchor,
         offset: -2,
         tag: "mcp sdk - import sdk",
         comment: "//"
@@ -32,8 +60,8 @@ const ios = async (config) => {
 
     appDelegate.contents = mergeContents({
         src: appDelegate.contents,
-        newSrc: initMCPSDKSnippet,
-        anchor: /(self\.initialProps = @\{\};)/,
+        newSrc: cfg.snippet,
+        anchor: cfg.snippetAnchor,
         offset: 2,
         tag: "mcp sdk - initialize sdk",
         comment: "//"

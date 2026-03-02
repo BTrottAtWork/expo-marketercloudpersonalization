@@ -15,6 +15,7 @@ updates:
       - dependency-name: "expo-system-ui"
       - dependency-name: "expo-module-scripts"
       - dependency-name: "expo-modules-core"
+      - dependency-name: "jest-expo"
       - dependency-name: "react-native-screens"
       - dependency-name: "react-native-safe-area-context"
       - dependency-name: "jest"

@@ -1,6 +1,6 @@
 {
   "name": "expo-marketercloudpersonalization",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Expo/React native wrapper for marketer cloud personalization sdk",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -58,6 +58,7 @@
   },
   "overrides": {
     "react": "19.1.0",
-    "minimatch": ">=9.0.7"
+    "minimatch": ">=9.0.7",
+    "@tootallnate/once": ">=3.0.1"
   }
 }

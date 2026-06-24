@@ -40,7 +40,7 @@
   "license": "MIT",
   "homepage": "https://github.com/BTrottAtWork/expo-marketercloudpersonalization#readme",
   "devDependencies": {
-    "@testing-library/react-native": "^13.x.x",
+    "@testing-library/react-native": "^14.x.x",
     "@types/jest": "29.5.14",
     "@types/react": "~19.1.10",
     "expo": "~54.0.34",
